@@ -1,0 +1,66 @@
+# Sobe o Authorization Service junto do seu Oracle, os dois na rede ganjj-net.
+#
+# A rede e externa de proposito: os outros microsservicos do GANJJ (client,
+# product, cart, order, promotion) entram nessa mesma rede e passam a enxergar
+# este servico pelo nome "authorization".
+#
+#   docker network create ganjj-net     # uma vez, antes do primeiro up
+#   ./scripts/generate-keys.sh          # gera o par de chaves RSA
+#   docker compose up --build
+
+services:
+  oracle-auth:
+    image: gvenzl/oracle-free:23-slim
+    container_name: oracle-auth
+    environment:
+      ORACLE_PASSWORD: ${ORACLE_ROOT_PASSWORD:-oracle}
+      APP_USER: ${DB_USER:-ganjj_auth}
+      APP_USER_PASSWORD: ${DB_PASSWORD:-ganjj_auth}
+    ports:
+      - "1521:1521"
+    volumes:
+      - oracle-auth-data:/opt/oracle/oradata
+    healthcheck:
+      # O servico so sobe depois que o banco aceita conexao — sem isso o Spring
+      # tenta conectar antes do Oracle terminar de inicializar e morre.
+      test: ["CMD", "healthcheck.sh"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 60s
+    networks:
+      - ganjj-net
+
+  authorization:
+    build: .
+    image: ganjj/authorization:1.0.0
+    container_name: authorization
+    depends_on:
+      oracle-auth:
+        condition: service_healthy
+    environment:
+      SERVER_PORT: 8081
+      DB_HOST: oracle-auth
+      DB_PORT: 1521
+      DB_NAME: FREEPDB1
+      DB_USER: ${DB_USER:-ganjj_auth}
+      DB_PASSWORD: ${DB_PASSWORD:-ganjj_auth}
+      JPA_DDL_AUTO: update
+      JWT_PRIVATE_KEY_PATH: /keys/private.pem
+      JWT_PUBLIC_KEY_PATH: /keys/public.pem
+      JWT_ACCESS_TOKEN_MINUTES: 15
+      JWT_REFRESH_TOKEN_DAYS: 7
+    ports:
+      - "8081:8081"
+    volumes:
+      # Somente leitura: o container nunca precisa escrever nas chaves.
+      - ./keys:/keys:ro
+    networks:
+      - ganjj-net
+
+volumes:
+  oracle-auth-data:
+
+networks:
+  ganjj-net:
+    external: true

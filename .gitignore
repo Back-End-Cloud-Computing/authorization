@@ -26,3 +26,6 @@ target/
 .env
 application-local.properties
 *.pem
+
+# Chaves RSA — geradas por ambiente, nunca versionadas
+keys/
