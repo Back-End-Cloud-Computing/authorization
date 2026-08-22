@@ -12,6 +12,10 @@ services:
   oracle-auth:
     image: gvenzl/oracle-free:23-slim
     container_name: oracle-auth
+    # Sem isto o serviço morre de vez num "docker compose restart" ou num
+    # reboot: o depends_on/healthcheck só vale no "up", então a aplicação
+    # sobe antes do banco aceitar conexão, falha e não tenta de novo.
+    restart: unless-stopped
     environment:
       ORACLE_PASSWORD: ${ORACLE_ROOT_PASSWORD:-oracle}
       APP_USER: ${DB_USER:-ganjj_auth}
@@ -35,6 +39,7 @@ services:
     build: .
     image: ganjj/authorization:1.0.0
     container_name: authorization
+    restart: unless-stopped
     depends_on:
       oracle-auth:
         condition: service_healthy
