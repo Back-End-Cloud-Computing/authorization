@@ -24,10 +24,35 @@ tokens JWT usados por todos os outros serviços do sistema.
 | `POST` | `/auth/register` | pública | Cria conta de cliente |
 | `POST` | `/auth/login` | pública | Autentica e devolve os tokens |
 | `POST` | `/auth/refresh` | pública | Renova o token de acesso |
+| `POST` | `/auth/logout` | pública | Invalida o refresh token |
 | `GET` | `/auth/me` | Bearer | Dados da conta autenticada |
+| `GET` | `/auth/accounts` | Bearer + ADMIN | Lista as contas cadastradas |
 | `GET` | `/auth/public-key` | pública | Chave pública em PEM, para os demais serviços |
 
+`/auth/refresh` e `/auth/logout` se autenticam pelo próprio refresh token, enviado no
+corpo — por isso não pedem header `Authorization`.
+
 Documentação interativa: `http://localhost:8081/swagger-ui.html`
+
+### Logout
+
+Cada refresh token carrega um identificador (`jti`). O logout grava esse
+identificador numa lista de revogados, e o refresh passa a recusá-lo. O mesmo vale ao
+renovar: o token usado é queimado e um novo é emitido no lugar, então um refresh token
+vazado deixa de funcionar assim que o dono legítimo renovar.
+
+O **token de acesso continua válido até expirar** (por padrão, 15 minutos). Isso é a
+contrapartida de os outros serviços validarem sem consultar ninguém — o cliente deve
+descartar o token de acesso ao sair.
+
+Uma tarefa diária remove da lista os tokens que já expiraram sozinhos.
+
+### Conta ADMIN
+
+O cadastro público sempre cria contas `CLIENTE`. Para ter a primeira conta `ADMIN`,
+preencha `ADMIN_EMAIL` e `ADMIN_PASSWORD` — ela é criada na inicialização, uma única
+vez. `GET /auth/accounts` existe para conferir que a autorização por papel está
+valendo: com token de `CLIENTE` responde `403`.
 
 ### O que vai dentro do token
 
@@ -133,6 +158,10 @@ produção trocando só os valores.
 | `JWT_REFRESH_TOKEN_DAYS` | `7` | Validade do refresh token |
 | `JWT_PRIVATE_KEY_PATH` | — | Caminho da chave privada (PEM) |
 | `JWT_PUBLIC_KEY_PATH` | — | Caminho da chave pública (PEM) |
+| `JWT_REVOKED_CLEANUP_CRON` | `0 0 3 * * *` | Faxina da lista de tokens revogados |
+| `CORS_ALLOWED_ORIGINS` | portas de dev | Origens do frontend, separadas por vírgula |
+| `ADMIN_EMAIL` | — | E-mail da conta ADMIN inicial |
+| `ADMIN_PASSWORD` | — | Senha da conta ADMIN inicial |
 
 As chaves em `keys/` não são versionadas: cada ambiente gera as suas.
 

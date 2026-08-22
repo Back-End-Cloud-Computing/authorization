@@ -1,5 +1,7 @@
 package com.ganjj.authorization.controller;
 
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ganjj.authorization.domain.user.User;
 import com.ganjj.authorization.infra.security.RsaKeyProvider;
 import com.ganjj.authorization.request.LoginRequest;
+import com.ganjj.authorization.request.LogoutRequest;
 import com.ganjj.authorization.request.RefreshRequest;
 import com.ganjj.authorization.request.RegisterRequest;
 import com.ganjj.authorization.response.AccountResponse;
@@ -55,11 +58,27 @@ public class AuthenticationController {
         return ResponseEntity.ok(accountService.refresh(request.refreshToken()));
     }
 
+    @PostMapping("/logout")
+    @Operation(summary = "Invalida o refresh token",
+            description = "O token de acesso continua valendo até expirar — descarte-o no cliente ao sair.")
+    public ResponseEntity<Void> logout(@RequestBody @Valid LogoutRequest request) {
+        accountService.logout(request.refreshToken());
+        return ResponseEntity.noContent().build();
+    }
+
     @GetMapping("/me")
     @SecurityRequirement(name = "bearerAuth")
     @Operation(summary = "Dados da conta autenticada")
     public ResponseEntity<AccountResponse> me(@AuthenticationPrincipal User user) {
         return ResponseEntity.ok(AccountResponse.from(user));
+    }
+
+    @GetMapping("/accounts")
+    @SecurityRequirement(name = "bearerAuth")
+    @Operation(summary = "Lista as contas cadastradas",
+            description = "Restrito a ADMIN. Serve também para conferir que a autorização por papel está valendo.")
+    public ResponseEntity<List<AccountResponse>> accounts() {
+        return ResponseEntity.ok(accountService.listAll());
     }
 
     @GetMapping(value = "/public-key", produces = MediaType.TEXT_PLAIN_VALUE)

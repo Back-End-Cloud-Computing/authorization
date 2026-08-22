@@ -63,11 +63,16 @@ public class TokenService {
                 .sign(algorithm);
     }
 
+    /**
+     * O refresh token leva um identificador próprio (jti). É ele que o logout
+     * grava na lista de revogados — sem precisar guardar o token em si.
+     */
     public String generateRefreshToken(User user) {
         Instant now = Instant.now();
         return JWT.create()
                 .withIssuer(properties.issuer())
                 .withSubject(user.getId().toString())
+                .withJWTId(UUID.randomUUID().toString())
                 .withClaim(CLAIM_TYPE, TYPE_REFRESH)
                 .withIssuedAt(now)
                 .withExpiresAt(now.plus(properties.refreshTokenDays(), ChronoUnit.DAYS))
@@ -87,16 +92,28 @@ public class TokenService {
         }
     }
 
-    /** Id da conta guardado no "sub", ou null se o token não servir. */
-    public UUID extractUserId(String token, String expectedType) {
+    /**
+     * Verifica o token e confirma que ele é do tipo esperado — um refresh token
+     * não deve abrir rota protegida, nem um token de acesso servir para renovar.
+     *
+     * @return o token decodificado, ou null se não servir.
+     */
+    public DecodedJWT verifyTyped(String token, String expectedType) {
         DecodedJWT decoded = verify(token);
         if (decoded == null) {
             return null;
         }
-        String type = decoded.getClaim(CLAIM_TYPE).asString();
-        if (!expectedType.equals(type)) {
-            return null;
-        }
+        return expectedType.equals(decoded.getClaim(CLAIM_TYPE).asString()) ? decoded : null;
+    }
+
+    /** Id da conta guardado no "sub", ou null se o token não servir. */
+    public UUID extractUserId(String token, String expectedType) {
+        DecodedJWT decoded = verifyTyped(token, expectedType);
+        return decoded == null ? null : parseSubject(decoded);
+    }
+
+    /** Id da conta a partir de um token já verificado. */
+    public UUID parseSubject(DecodedJWT decoded) {
         try {
             return UUID.fromString(decoded.getSubject());
         } catch (IllegalArgumentException e) {

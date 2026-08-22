@@ -4,6 +4,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -32,11 +33,14 @@ public class SecurityConfiguration {
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
+                .cors(Customizer.withDefaults())
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
                         // Cadastro e login são públicos — é assim que o cliente entra no sistema.
-                        .requestMatchers(HttpMethod.POST, "/auth/register", "/auth/login", "/auth/refresh")
+                        // Refresh e logout se autenticam pelo próprio refresh token, no corpo.
+                        .requestMatchers(HttpMethod.POST, "/auth/register", "/auth/login",
+                                "/auth/refresh", "/auth/logout")
                         .permitAll()
                         // Chave pública: os demais serviços a consomem para validar tokens.
                         .requestMatchers(HttpMethod.GET, "/auth/public-key").permitAll()
@@ -44,6 +48,8 @@ public class SecurityConfiguration {
                         .requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**",
                                 "/actuator/health")
                         .permitAll()
+                        // Rotas administrativas exigem o papel ADMIN.
+                        .requestMatchers("/auth/accounts").hasRole("ADMIN")
                         .anyRequest().authenticated())
                 .exceptionHandling(handling -> handling
                         .authenticationEntryPoint(authenticationEntryPoint())
