@@ -45,8 +45,21 @@ public class RsaKeyProvider {
         boolean configured = hasText(properties.privateKeyPath()) && hasText(properties.publicKeyPath());
 
         if (configured) {
-            this.privateKey = readPrivateKey(Path.of(properties.privateKeyPath()));
-            this.publicKey = readPublicKey(Path.of(properties.publicKeyPath()));
+            Path privatePath = Path.of(properties.privateKeyPath());
+            Path publicPath = Path.of(properties.publicKeyPath());
+
+            // Erro comum em clone novo: a pasta keys/ não é versionada, e o
+            // Docker cria o diretório vazio ao montar o volume em vez de
+            // reclamar. Sem esta checagem, a mensagem seria só "arquivo não
+            // encontrado", sem dizer o que fazer.
+            if (!Files.exists(privatePath) || !Files.exists(publicPath)) {
+                throw new IllegalStateException(
+                        "Chaves RSA não encontradas em " + privatePath + " e " + publicPath
+                                + ". Rode ./scripts/generate-keys.sh antes de subir o serviço.");
+            }
+
+            this.privateKey = readPrivateKey(privatePath);
+            this.publicKey = readPublicKey(publicPath);
             log.info("Chaves RSA carregadas de {} e {}", properties.privateKeyPath(), properties.publicKeyPath());
             return;
         }
