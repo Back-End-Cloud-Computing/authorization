@@ -174,6 +174,20 @@ ambiente compartilhado, use as chaves geradas pelo script.
 ./mvnw test
 ```
 
+### Conferir se está tudo funcionando
+
+Com os dois serviços no ar (authorization e client), rode:
+
+```bash
+./scripts/smoke-test.sh
+```
+
+Ele percorre o caminho completo de verdade, batendo nos dois serviços: cadastro, login,
+criação de perfil, permissão por papel, renovação, logout e Swagger. São 31
+verificações, e ele diz exatamente qual falhou.
+
+Pode rodar quantas vezes quiser sem limpar nada, porque cada execução usa e-mails novos.
+
 Os testes usam H2 em memória no lugar do Oracle. Como toda a configuração de banco vem
 de variável de ambiente, nenhuma linha de código muda entre um e outro.
 
