@@ -72,20 +72,45 @@ Os tokens são assinados em RS256. O conteúdo:
 Os demais serviços leem `sub` e `role` direto do token, sem consultar banco nem
 chamar este serviço.
 
-### Integrando os outros serviços
+## Integrando os outros serviços
 
-Cada serviço precisa apenas da chave pública — por variável de ambiente, ou buscando
-uma vez na inicialização:
+Quem cuida do login é este serviço, que devolve um token pro usuário. Os outros
+serviços não precisam chamar ele pra nada: cada um confere o token sozinho.
+
+Pra isso você só precisa de um arquivo, a chave pública. Baixe uma vez e deixe no seu
+projeto. Pode commitar, ela é pública mesmo.
 
 ```bash
 curl -s http://localhost:8081/auth/public-key > public.pem
 ```
 
-`examples/verify_token.py` mostra a verificação passo a passo. Na prática, use a
-biblioteca JWT da sua linguagem — `PyJWT`, `jsonwebtoken`,
-`System.IdentityModel.Tokens.Jwt`, `firebase/php-jwt`, `golang-jwt` — apontando para
-essa chave e exigindo algoritmo `RS256`, emissor `ganjj-authorization` e `typ` igual
-a `access`.
+O token chega no cabeçalho `Authorization`. Use a biblioteca de JWT da sua linguagem,
+tem pronta pra todas: `PyJWT` no Python, `jsonwebtoken` no Node,
+`System.IdentityModel.Tokens.Jwt` no C#, `firebase/php-jwt` no PHP, `golang-jwt` no Go.
+
+Na configuração dela, marque o algoritmo como **RS256**. Esse é o ponto mais
+importante: se esquecer, tudo continua funcionando normal, mas fica possível alguém
+forjar um token e entrar como quiser. Vale conferir também o emissor
+(`ganjj-authorization`) e que o campo `typ` seja `access`, pra um refresh token não
+passar como token de acesso.
+
+Token válido traz o **id do usuário** no campo `sub` e a **role** (`CLIENTE` ou
+`ADMIN`). Use o id pra saber de quem são os dados e a role pra liberar rota de admin.
+E nunca pegue o id do corpo da requisição, só de dentro do token, senão qualquer um
+edita os dados de qualquer um.
+
+O token vale 2 horas. Depois disso é só responder `401`. Quem renova é o front,
+chamando `POST /auth/refresh`.
+
+Uma pegadinha do Docker: lá dentro do container, `localhost` é o próprio container e
+não este serviço. O endereço é `authorization` na porta 8081, e o seu serviço precisa
+estar na rede `ganjj-net`.
+
+Pra testar, entre no Swagger em `http://localhost:8081/swagger-ui.html`, crie uma conta
+e faça login. Ele já devolve o token pra você usar.
+
+O arquivo `examples/verify_token.py` mostra a verificação passo a passo, se quiser ver
+o que acontece por baixo.
 
 ## Rodando com Docker
 
