@@ -95,6 +95,15 @@ docker network create ganjj-net
 docker compose up --build
 ```
 
+No Windows (PowerShell), troque o script do meio:
+
+```powershell
+.\scripts\generate-keys.ps1
+```
+
+Ele usa o `openssl` se você tiver (o Git para Windows traz um) e, se não tiver, gera as
+chaves pelo Docker — que este projeto já exige de qualquer forma.
+
 O serviço sobe em `http://localhost:8081`. O `docker-compose.yml` já espera o Oracle
 ficar saudável antes de iniciar a aplicação.
 
