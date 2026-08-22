@@ -41,7 +41,7 @@ identificador numa lista de revogados, e o refresh passa a recusá-lo. O mesmo v
 renovar: o token usado é queimado e um novo é emitido no lugar, então um refresh token
 vazado deixa de funcionar assim que o dono legítimo renovar.
 
-O **token de acesso continua válido até expirar** (por padrão, 15 minutos). Isso é a
+O **token de acesso continua válido até expirar** (por padrão, 2 horas). Isso é a
 contrapartida de os outros serviços validarem sem consultar ninguém — o cliente deve
 descartar o token de acesso ao sair.
 
@@ -163,7 +163,7 @@ produção trocando só os valores.
 | `DB_PASSWORD` | `ganjj_auth` | Senha do banco |
 | `JPA_DDL_AUTO` | `update` | Estratégia do Hibernate |
 | `JWT_ISSUER` | `ganjj-authorization` | Emissor gravado no token |
-| `JWT_ACCESS_TOKEN_MINUTES` | `15` | Validade do token de acesso |
+| `JWT_ACCESS_TOKEN_MINUTES` | `120` | Validade do token de acesso (em minutos) |
 | `JWT_REFRESH_TOKEN_DAYS` | `7` | Validade do refresh token |
 | `JWT_PRIVATE_KEY_PATH` | — | Caminho da chave privada (PEM) |
 | `JWT_PUBLIC_KEY_PATH` | — | Caminho da chave pública (PEM) |

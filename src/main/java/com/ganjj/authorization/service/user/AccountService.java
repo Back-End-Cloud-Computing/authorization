@@ -116,7 +116,7 @@ public class AccountService {
     /**
      * Invalida o refresh token informado.
      *
-     * O token de acesso continua válido até expirar (por padrão, 15 minutos) —
+     * O token de acesso continua válido até expirar (por padrão, 2 horas) —
      * é a contrapartida de os outros serviços validarem sem consultar ninguém.
      * Por isso o cliente deve descartar o token de acesso ao sair.
      *
