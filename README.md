@@ -74,6 +74,10 @@ chamar este serviço.
 
 ## Integrando os outros serviços
 
+> Se bater qualquer dúvida (o que é access e refresh token, onde o front guarda,
+> se usa cookie, o que fazer quando dá 401), tem um documento respondendo tudo em
+> [docs/COMO-FUNCIONA.md](docs/COMO-FUNCIONA.md).
+
 Quem cuida do login é este serviço, que devolve um token pro usuário. Os outros
 serviços não precisam chamar ele pra nada: cada um confere o token sozinho.
 
