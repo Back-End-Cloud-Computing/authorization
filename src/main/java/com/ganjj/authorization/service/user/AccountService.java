@@ -76,8 +76,11 @@ public class AccountService {
             throw new InvalidCredentialsException();
         }
 
-        // Um token revogado por logout não renova mais nada.
-        if (decoded.getId() != null && revokedTokenRepository.existsById(decoded.getId())) {
+        // Sem o jti não há como saber se o token foi revogado. Recusar é o
+        // único caminho seguro: aceitar seria abrir mão da checagem justamente
+        // quando ela não pode ser feita.
+        String jti = decoded.getId();
+        if (jti == null || revokedTokenRepository.existsById(jti)) {
             throw new InvalidCredentialsException();
         }
 
