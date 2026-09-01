@@ -136,6 +136,19 @@ chaves pelo Docker — que este projeto já exige de qualquer forma.
 O serviço sobe em `http://localhost:8081`. O `docker-compose.yml` já espera o Oracle
 ficar saudável antes de iniciar a aplicação.
 
+> **Se algo local já usa a 8081**, suba noutra porta do host:
+>
+> ```bash
+> SERVER_HOST_PORT=8091 docker compose up -d
+> ```
+>
+> Isso muda só a porta de fora. Dentro da rede Docker o serviço continua sendo
+> `authorization:8081`, então os outros microsserviços não precisam mudar nada.
+>
+> Vale ficar atento: quando outro processo já ocupa a porta, o container sobe normal e
+> o erro não aparece no log. O sintoma é `localhost:8081` responder algo estranho, de
+> outra aplicação. Confira com `lsof -nP -iTCP:8081 -sTCP:LISTEN`.
+
 A rede `ganjj-net` é externa de propósito: os outros microsserviços do GANJJ entram
 nela e passam a enxergar este serviço pelo nome `authorization`.
 
