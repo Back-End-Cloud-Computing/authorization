@@ -139,7 +139,7 @@ ficar saudável antes de iniciar a aplicação.
 > **Se algo local já usa a 8081**, suba noutra porta do host:
 >
 > ```bash
-> SERVER_HOST_PORT=8091 docker compose up -d
+> AUTH_HOST_PORT=8091 docker compose up -d
 > ```
 >
 > Isso muda só a porta de fora. Dentro da rede Docker o serviço continua sendo

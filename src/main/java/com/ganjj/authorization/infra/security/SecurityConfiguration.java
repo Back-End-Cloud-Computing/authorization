@@ -44,9 +44,9 @@ public class SecurityConfiguration {
                         .permitAll()
                         // Chave pública: os demais serviços a consomem para validar tokens.
                         .requestMatchers(HttpMethod.GET, "/auth/public-key").permitAll()
-                        // Documentação e health check.
+                        // Documentação, health check e identificação da instância.
                         .requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**",
-                                "/actuator/health")
+                                "/actuator/health", "/instance")
                         .permitAll()
                         // Rotas administrativas exigem o papel ADMIN.
                         .requestMatchers("/auth/accounts").hasRole("ADMIN")

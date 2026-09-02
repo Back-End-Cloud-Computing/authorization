@@ -1,0 +1,88 @@
+# Authorization Service no Kubernetes.
+#
+# Troque "seu-usuario-dockerhub" pelo seu usuario real antes de aplicar, ou use
+# a imagem local se o cluster compartilhar o daemon do Docker (caso do OrbStack).
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: authorization
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: authorization
+  template:
+    metadata:
+      labels:
+        app: authorization
+    spec:
+      containers:
+        - name: authorization
+          image: ganjj/authorization:1.1.0
+          # Sem isto o Kubernetes tentaria baixar do Docker Hub uma imagem que
+          # so existe localmente. Remova quando a imagem estiver publicada.
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8081
+          env:
+            # O banco e alcancado pelo NOME DO SERVICE, nunca pelo IP do Pod.
+            - name: DB_HOST
+              value: oracle-auth
+            - name: DB_PORT
+              value: "1521"
+            - name: DB_NAME
+              value: FREEPDB1
+            - name: DB_USER
+              value: ganjj_auth
+            - name: DB_PASSWORD
+              value: ganjj_auth
+            - name: ADMIN_EMAIL
+              value: admin@ganjj.com
+            - name: ADMIN_PASSWORD
+              value: adminSegura123
+            # As chaves vem do Secret montado abaixo. Isto e o que permite as
+            # tres replicas: sem uma chave compartilhada, cada Pod geraria a
+            # sua e um token emitido por um seria recusado pelos outros.
+            - name: JWT_PRIVATE_KEY_PATH
+              value: /keys/private.pem
+            - name: JWT_PUBLIC_KEY_PATH
+              value: /keys/public.pem
+          volumeMounts:
+            - name: jwt-keys
+              mountPath: /keys
+              readOnly: true
+          # O Oracle demora a subir. Enquanto a aplicacao nao responde, o
+          # Service nao manda trafego para ela.
+          readinessProbe:
+            httpGet:
+              path: /auth/public-key
+              port: 8081
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            failureThreshold: 30
+          # Se a aplicacao travar, o Kubernetes reinicia o container.
+          livenessProbe:
+            httpGet:
+              path: /instance
+              port: 8081
+            initialDelaySeconds: 90
+            periodSeconds: 20
+      volumes:
+        - name: jwt-keys
+          secret:
+            secretName: jwt-keys
+
+---
+# Endereco estavel do Authorization. Os demais microsservicos do GANJJ chamam
+# "http://authorization:8081" e nunca precisam saber quantos Pods existem.
+apiVersion: v1
+kind: Service
+metadata:
+  name: authorization
+spec:
+  selector:
+    app: authorization
+  ports:
+    - port: 8081
+      targetPort: 8081
