@@ -106,11 +106,26 @@ kubectl apply -f k8s/authorization.yaml
 
 ## Acessar do host
 
-O Service é ClusterIP, então não publica porta na máquina. Para testar o Swagger:
+**Via port-forward** (o que o Lab 05 usa, direto no Service):
 
 ```bash
 kubectl port-forward service/authorization 8081:8081
 ```
+
+**Via Ingress** (Lab 06 — entrada HTTP de verdade, sem port-forward):
+
+```bash
+kubectl apply -f k8s/ingress.yaml
+kubectl get svc -n ingress-nginx ingress-nginx-controller   # pega o EXTERNAL-IP
+curl -H "Host: auth.ganjj.local" http://<EXTERNAL-IP>/auth/public-key
+```
+
+O roteamento é por **host**, não por path — diferente do lab original, que usa
+`path: /` porque só existe um serviço. Aqui há dois (`auth.ganjj.local` e
+`client.ganjj.local`), e rotear por host evita que rotas iguais nos dois
+serviços (`/instance`, por exemplo) colidam. Sem editar `/etc/hosts`, o teste
+acima usa o header `Host` diretamente — no navegador, aponte o `/etc/hosts` da
+sua máquina para o `EXTERNAL-IP` se quiser acessar pela URL.
 
 ## Sobre a imagem
 
