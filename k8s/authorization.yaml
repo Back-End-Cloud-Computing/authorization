@@ -69,6 +69,17 @@ spec:
               port: 8081
             initialDelaySeconds: 90
             periodSeconds: 20
+          # Sem isto um Pod com vazamento de memória, por exemplo, poderia
+          # consumir os recursos do node inteiro. O limit da JVM é folgado de
+          # propósito: o auth carrega Spring + Hibernate, mais pesado que os
+          # outros serviços do GANJJ.
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "384Mi"
+            limits:
+              cpu: "1"
+              memory: "768Mi"
       volumes:
         - name: jwt-keys
           secret:
