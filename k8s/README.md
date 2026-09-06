@@ -114,16 +114,19 @@ kubectl port-forward service/authorization 8081:8081
 
 ## Sobre a imagem
 
-Os manifests apontam para `ganjj/authorization:1.1.0` com
-`imagePullPolicy: IfNotPresent`, que usa a imagem local quando o cluster
-compartilha o daemon do Docker (caso do OrbStack). Para publicar:
+Publicada em [eduardofabri/authorization](https://hub.docker.com/r/eduardofabri/authorization).
+O `imagePullPolicy: IfNotPresent` evita baixar de novo quando o cluster já tem a
+tag em cache local (caso do OrbStack, que compartilha o daemon do Docker) —
+mas a imagem existe no Docker Hub, então o manifesto sobe em qualquer cluster.
+
+Para publicar uma versão nova:
 
 ```bash
-docker tag ganjj/authorization:1.1.0 seu-usuario/authorization:1.1.0
-docker push seu-usuario/authorization:1.1.0
+docker build -t eduardofabri/authorization:1.2.0 .
+docker push eduardofabri/authorization:1.2.0
 ```
 
-E troque o campo `image` no `authorization.yaml`.
+E atualize a tag em `image:` no `authorization.yaml`.
 
 ## Limitação conhecida
 
