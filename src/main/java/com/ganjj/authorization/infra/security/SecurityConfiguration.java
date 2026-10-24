@@ -46,7 +46,7 @@ public class SecurityConfiguration {
                         .requestMatchers(HttpMethod.GET, "/auth/public-key").permitAll()
                         // Documentação, health check e identificação da instância.
                         .requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**",
-                                "/actuator/health", "/instance")
+                                "/actuator/health", "/metrics", "/instance")
                         .permitAll()
                         // Rotas administrativas exigem o papel ADMIN.
                         .requestMatchers("/auth/accounts").hasRole("ADMIN")

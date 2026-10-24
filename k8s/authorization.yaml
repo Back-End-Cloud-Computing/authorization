@@ -14,12 +14,16 @@ spec:
       app: authorization
   template:
     metadata:
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8081"
+        prometheus.io/path: /metrics
       labels:
         app: authorization
     spec:
       containers:
         - name: authorization
-          image: eduardofabri/authorization:1.1.0
+          image: eduardofabri/authorization:1.2.0
           # A imagem esta publicada no Docker Hub. IfNotPresent evita baixar
           # de novo quando o cluster ja tem a mesma tag em cache local (caso
           # do OrbStack, que compartilha o daemon do Docker).
@@ -37,11 +41,17 @@ spec:
             - name: DB_USER
               value: ganjj_auth
             - name: DB_PASSWORD
-              value: ganjj_auth
+              valueFrom:
+                secretKeyRef:
+                  name: authorization-credentials
+                  key: db-password
             - name: ADMIN_EMAIL
               value: admin@ganjj.com
             - name: ADMIN_PASSWORD
-              value: adminSegura123
+              valueFrom:
+                secretKeyRef:
+                  name: authorization-credentials
+                  key: admin-password
             # As chaves vem do Secret montado abaixo. Isto e o que permite as
             # tres replicas: sem uma chave compartilhada, cada Pod geraria a
             # sua e um token emitido por um seria recusado pelos outros.

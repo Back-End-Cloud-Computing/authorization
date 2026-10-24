@@ -149,3 +149,7 @@ O Oracle roda como Deployment sem volume persistente: se o Pod for recriado, o
 banco começa vazio e a aplicação recria o schema e a conta ADMIN. Para o
 laboratório basta. Um banco de verdade pediria StatefulSet com
 PersistentVolumeClaim.
+
+## Credenciais do banco e administrador
+
+Antes de aplicar os manifests, defina `DB_PASSWORD`, `ADMIN_PASSWORD`, `ORACLE_PASSWORD` no ambiente e execute `./k8s/criar-credentials.sh`. O script cria o Secret `authorization-credentials` no namespace atual; use o mesmo namespace ao aplicar os manifests. Não versione as senhas. Atualizar um Secret não altera a senha de um banco já inicializado: coordene a rotação no banco antes de reiniciar a aplicação.

@@ -30,11 +30,17 @@ spec:
             - containerPort: 1521
           env:
             - name: ORACLE_PASSWORD
-              value: oracle
+              valueFrom:
+                secretKeyRef:
+                  name: authorization-credentials
+                  key: oracle-password
             - name: APP_USER
               value: ganjj_auth
             - name: APP_USER_PASSWORD
-              value: ganjj_auth
+              valueFrom:
+                secretKeyRef:
+                  name: authorization-credentials
+                  key: db-password
           # O Oracle demora bastante para aceitar conexao. Sem esta sonda, o
           # Service passaria a mandar trafego antes de o banco estar pronto.
           readinessProbe:
