@@ -1,0 +1,63 @@
+{{- if .Values.ingress.enabled }}
+# Entrada HTTP externa para o Authorization.
+#
+# O lab do ms-task usa path: / porque tem só um serviço. Aqui, com dois
+# serviços no mesmo cluster, o roteamento é por HOST em vez de path — assim
+# /instance, /swagger-ui.html etc. continuam funcionando sem prefixo, do jeito
+# que o código já espera.
+#
+# O Ingress aponta para o SERVICE, nunca para um Pod.
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: authorization-ingress
+spec:
+  ingressClassName: {{ .Values.ingress.className }}
+  rules:
+    - host: {{ .Values.ingress.host }}
+      http:
+        paths:
+          - path: /auth
+            pathType: Prefix
+            backend:
+              service:
+                name: authorization
+                port:
+                  number: 8081
+          - path: /instance
+            pathType: Exact
+            backend:
+              service:
+                name: authorization
+                port:
+                  number: 8081
+          - path: /swagger-ui
+            pathType: Prefix
+            backend:
+              service:
+                name: authorization
+                port:
+                  number: 8081
+          - path: /swagger-ui.html
+            pathType: Exact
+            backend:
+              service:
+                name: authorization
+                port:
+                  number: 8081
+          - path: /v3/api-docs
+            pathType: Prefix
+            backend:
+              service:
+                name: authorization
+                port:
+                  number: 8081
+          - path: /actuator/health
+            pathType: Exact
+            backend:
+              service:
+                name: authorization
+                port:
+                  number: 8081
+
+{{- end }}

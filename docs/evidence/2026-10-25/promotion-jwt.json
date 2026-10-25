@@ -1,0 +1,18 @@
+{
+  "date": "2026-10-25",
+  "real_services": [
+    "authorization",
+    "promotion",
+    "MySQL"
+  ],
+  "checks": {
+    "admin": 200,
+    "client": 403,
+    "missing": 401,
+    "refresh": 401,
+    "malformed": 401,
+    "invalid-signature": 401,
+    "expired": 401,
+    "wrong-issuer": 401
+  }
+}

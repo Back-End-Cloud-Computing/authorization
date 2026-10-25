@@ -1,6 +1,6 @@
 # Etapa 1 — compila o JAR dentro da propria imagem, para o build nao depender
 # do que esta instalado na maquina de quem roda.
-FROM maven:3.9-eclipse-temurin-21 AS build
+FROM --platform=$BUILDPLATFORM maven:3.9-eclipse-temurin-21 AS build
 WORKDIR /build
 
 # As dependencias sao baixadas antes do codigo: enquanto o pom.xml nao mudar,

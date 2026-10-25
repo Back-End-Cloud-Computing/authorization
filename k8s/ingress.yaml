@@ -16,8 +16,43 @@ spec:
     - host: auth.ganjj.local
       http:
         paths:
-          - path: /
+          - path: /auth
             pathType: Prefix
+            backend:
+              service:
+                name: authorization
+                port:
+                  number: 8081
+          - path: /instance
+            pathType: Exact
+            backend:
+              service:
+                name: authorization
+                port:
+                  number: 8081
+          - path: /swagger-ui
+            pathType: Prefix
+            backend:
+              service:
+                name: authorization
+                port:
+                  number: 8081
+          - path: /swagger-ui.html
+            pathType: Exact
+            backend:
+              service:
+                name: authorization
+                port:
+                  number: 8081
+          - path: /v3/api-docs
+            pathType: Prefix
+            backend:
+              service:
+                name: authorization
+                port:
+                  number: 8081
+          - path: /actuator/health
+            pathType: Exact
             backend:
               service:
                 name: authorization
