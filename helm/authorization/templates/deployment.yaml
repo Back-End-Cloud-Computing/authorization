@@ -65,7 +65,15 @@ spec:
               readOnly: true
           # O Oracle demora a subir. Enquanto a aplicacao nao responde, o
           # Service nao manda trafego para ela.
+          startupProbe:
+            timeoutSeconds: 5
+            httpGet:
+              path: /auth/public-key
+              port: 8081
+            failureThreshold: 120
+            periodSeconds: 5
           readinessProbe:
+            timeoutSeconds: 5
             httpGet:
               path: /auth/public-key
               port: 8081
@@ -74,6 +82,7 @@ spec:
             failureThreshold: 30
           # Se a aplicacao travar, o Kubernetes reinicia o container.
           livenessProbe:
+            timeoutSeconds: 5
             httpGet:
               path: /instance
               port: 8081

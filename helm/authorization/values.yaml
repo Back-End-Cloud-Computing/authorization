@@ -1,7 +1,7 @@
 replicaCount: 3
 image:
   repository: eduardofabri/authorization
-  tag: "1.2.0"
+  tag: "1.2.1"
   pullPolicy: IfNotPresent
 existingSecret: authorization-credentials
 jwtExistingName: jwt-keys

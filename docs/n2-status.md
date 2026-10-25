@@ -1,19 +1,20 @@
-# Validação N2 (authorization)
+# Validação N2 — authorization
 
-Preparado em 24/10/2026 para revisão. Não representa conclusão das etapas manuais.
+Atualizado em 25/10/2026. Evidências sanitizadas em `docs/evidence/2026-10-25/`.
 
-- CI, `/metrics`, credenciais em Secret, chart Helm e dashboard JSON implementados.
-- Validação local: `./mvnw verify` (25 testes) e build Docker; `helm lint` e renderização dos templates.
-- Publicação Docker Hub pendente: configurar `DOCKERHUB_USERNAME` e `DOCKERHUB_TOKEN`, executar o workflow de release para `1.2.0`, conferir `docker buildx imagetools inspect eduardofabri/authorization:1.2.0` e confirmar acesso público.
-- Cluster pendente: o ambiente não tinha contexto Kubernetes configurado. Criar os Secrets/chaves e validar `helm install` num Minikube limpo; gerar tráfego e capturar o dashboard.
-- Conferir os conteúdos das aulas de Helm (27/10) e observabilidade (03/11) antes do aceite final.
-- Ensaio com o grupo pendente, com tempo por pessoa anotado até 07/11. Apresentação em 10/11.
+## Executado
 
-## Roteiro para o ensaio
+- Build, análise e testes locais; CI do PR anterior verde (nova revisão será validada novamente).
+- Imagem pública Docker Hub `eduardofabri/authorization:1.2.1`, com linux/amd64 e linux/arm64. Manifest inspecionado e acesso anônimo validado.
+- Instalação real por Helm em Minikube limpo (perfil `ganjj-n2`, Kubernetes 1.37.0), credenciais externas ao Git.
+- Prometheus coletando o serviço e dashboard Grafana importado por provisionamento. Captura versionada.
+- Três réplicas validadas; login ADMIN/CLIENTE e assinatura RS256 conferidos no cluster. Chave pública consumida por client, gateway e promotion reais.
+- Ajuste de inicialização: Hikari aguarda Oracle; startupProbe tolera boot frio; probes com timeout de 5s.
+- Gateway validou login/perfil e rejeição de refresh. Promotion retornou ADMIN 200, CLIENTE 403 e 401 para ausência, refresh, formato inválido, expiração, issuer errado e assinatura inválida.
+- Comparação com o material indicado por Eduardo registrada em `docs/jwt-n2.md`, incluindo diferenças para Keycloak/Istio/aud.
+- Ingress aceita `/auth/public-key` e não encaminha `/metrics` (404).
 
-1. Explicar por que Java/Spring Boot e Oracle para autenticação e integridade dos registros.
-2. Explicar JWT RS256: quem guarda a privada, como a pública é distribuída e por que múltiplas réplicas validam o mesmo token.
-3. Demonstrar login, requisição protegida, 401 sem token e 403 sem papel adequado.
-4. Mostrar Deployments, Services, réplicas, probes, limites e credenciais por Secret.
-5. Gerar tráfego; mostrar requisições, erros e latência no Grafana.
-6. Anotar duração real e ajustar o roteiro com o grupo.
+## Pendências humanas / externas
+
+- Ensaio da apresentação com o grupo, com tempo por pessoa; roteiro pronto, mas não foi declarado um ensaio humano que não ocorreu.
+- Acordo e compartilhamento privado das credenciais de teste com os responsáveis por promotion/gateway. Não publicar senha/token/chave privada em issue ou PR.
