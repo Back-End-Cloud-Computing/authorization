@@ -4,7 +4,7 @@ Conferência de 29/10/2026, baseada nos critérios das 10 issues atribuídas a E
 
 ## Escopo combinado
 
-Os critérios técnicos estão atendidos. Permanecem apenas ensaio com o grupo e revisão/merge do PR, aceitos como exceções temporárias pelo responsável. A decisão é manter o ambiente local, sem hospedagem pública nova.
+Os critérios técnicos estão atendidos. Permanecem apenas ensaio com o grupo e revisão/merge do PR, aceitos como exceções temporárias pelo responsável. As evidências deste responsável foram obtidas no laboratório local; isso não substitui a apresentação compartilhada no EKS pelo kit do grupo.
 
 | Issue | Resultado | Evidência |
 |---|---|---|
@@ -23,8 +23,12 @@ Os critérios técnicos estão atendidos. Permanecem apenas ensaio com o grupo e
 
 [PR #12](https://github.com/Back-End-Cloud-Computing/authorization/pull/12) contém a documentação atualizada. Aguardar revisão e integração conforme autorização do responsável; o agente não fez merge na main.
 
-A conta ADMIN foi compartilhada por canal privado. Senha, token e chave privada não constam neste documento. O DNS .svc funciona dentro do Kubernetes correspondente; não se exige hospedagem pública para esta entrega local.
+A conta ADMIN foi compartilhada por canal privado. Senha, token e chave privada não constam neste documento. O DNS .svc funciona dentro do Kubernetes correspondente; não é necessário criar URL pública por serviço: na apresentação EKS a entrada externa é o Gateway/Ingress.
 
 Os secrets ausentes do workflow adicional Docker Hub não impedem o aceite das issues: CI e imagem pública multiarch já estão comprovados. Automatizar futuras publicações nesse registry é uma configuração operacional adicional, não uma exigência nova das issues auditadas.
 
 Guia próprio: [entrega-local.md](entrega-local.md); estado e limites da evidência: [n2-status.md](n2-status.md).
+
+## Contexto da apresentação
+
+A validação local descrita nesta matriz é de desenvolvimento/testes. A implantação compartilhada da N2 segue o [kit EKS do api-gateway](https://github.com/Back-End-Cloud-Computing/api-gateway/tree/main/eks), sem tornar cada serviço público. Esta revisão documental não executa infraestrutura AWS nem afirma que uma nova implantação EKS foi realizada pelo agente.

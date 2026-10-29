@@ -19,4 +19,4 @@ Atualizado em 29/10/2026; as validações técnicas abaixo foram registradas em 
 - Ensaio da apresentação com o grupo, com tempo por pessoa; roteiro pronto, mas não foi declarado um ensaio humano que não ocorreu.
 - Compartilhamento privado ADMIN confirmado por Eduardo em 29/10 com promotion/gateway; [issue #8 encerrada](https://github.com/Back-End-Cloud-Computing/authorization/issues/8) após registrar a confirmação. Nenhuma senha/token/chave privada deve constar em issue ou PR.
 
-Guia operacional próprio: [entrega-local.md](entrega-local.md). O ambiente permanecerá local; DNS .svc não é hospedagem pública. A revisão documental não reexecutou a suíte técnica.
+Guia operacional próprio: [entrega-local.md](entrega-local.md). O laboratório de desenvolvimento permanece local; a implantação compartilhada da N2 segue o kit EKS do grupo; DNS .svc não é hospedagem pública. A revisão documental não reexecutou a suíte técnica.

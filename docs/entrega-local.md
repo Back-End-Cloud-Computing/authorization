@@ -2,6 +2,12 @@
 
 Atualizado em 29/10/2026. Este guia pertence ao authorization; rotas, payloads e variáveis completas estão no [README](../README.md).
 
+## Desenvolvimento local e apresentação N2
+
+Este guia descreve o laboratório de desenvolvimento e validação local usado nesta etapa. A decisão temporária de trabalhar localmente não define o destino final da apresentação. A implantação compartilhada da N2 segue o [kit Amazon EKS do api-gateway](https://github.com/Back-End-Cloud-Computing/api-gateway/tree/main/eks), coordenado pelo grupo. O Gateway/Ingress é a entrada externa única; client, authorization e support continuam serviços internos, sem necessidade de uma URL pública por serviço.
+
+O kit aplica os manifests no namespace do contexto kubectl, default no fluxo padrão. DNS curto como authorization:8081 funciona para consumidores no mesmo namespace; authorization.default.svc:8081 identifica explicitamente o namespace default. O DNS com ganjj-n2 só vale no laboratório onde esse namespace foi criado/aplicado. Esta revisão é documental: não cria nem modifica infraestrutura AWS.
+
 ## Responsabilidade e dependências
 
 Authorization mantém e-mail, senha com BCrypt e papel da conta no Oracle. Emite access/refresh tokens assinados com RSA/RS256 e publica a chave pública para os serviços consumidores. Nome, endereço e telefone são responsabilidade do client, ligados pelo mesmo ID de conta.
@@ -14,12 +20,14 @@ Requisitos: Java 21, Oracle e par RSA persistente para integração compartilhad
 |---|---|
 | Computador com Compose padrão | http://localhost:8081 |
 | Dentro da rede Docker ganjj-net | http://authorization:8081 |
-| Dentro do Kubernetes do laboratório | http://authorization.ganjj-n2.svc:8081 |
+| Laboratório Minikube, namespace ganjj-n2 explicitamente criado | http://authorization.ganjj-n2.svc:8081 |
+| EKS, consumidores no mesmo namespace | http://authorization:8081 |
+| EKS, namespace default do fluxo padrão | http://authorization.default.svc:8081 |
 | Swagger no computador | http://localhost:8081/swagger-ui.html |
 | Chave pública no computador | http://localhost:8081/auth/public-key |
 | Saúde no computador | http://localhost:8081/actuator/health |
 
-O endereço .svc é interno do cluster; localhost aponta para quem faz a requisição. Esses endereços não são URLs públicas para colegas em outra máquina. O grupo decidiu manter tudo local: cada ambiente precisa executar os serviços e distribuir sua própria chave pública ou combinar acesso à rede de laboratório. Não foi criada hospedagem pública.
+O endereço .svc é interno do cluster; localhost aponta para quem faz a requisição. Esses endereços não são URLs públicas para colegas em outra máquina. Para desenvolver localmente, cada ambiente executa os serviços e distribui a chave pública correspondente ou combina acesso à rede do laboratório. Isso não substitui a implantação compartilhada no EKS para a apresentação; externamente, a entrada continua sendo o Gateway/Ingress.
 
 ## Iniciar
 
@@ -66,6 +74,6 @@ Validações anteriores registradas em 25/10: três réplicas, ADMIN/CLIENTE, RS
 
 ## Pendências
 
-Realizar o ensaio em grupo (#7), por último. A issue #8 está encerrada; a revisão documental foi enviada à branch própria codex/documentacao-authorization, aguardando revisão para integração. O ambiente permanecerá local.
+Realizar o ensaio em grupo (#7), por último. A issue #8 está encerrada; a revisão documental foi enviada à branch própria codex/documentacao-authorization, aguardando revisão para integração. O laboratório desta etapa permanece local; o destino compartilhado da N2 é tratado pelo kit EKS do grupo.
 
 Matriz completa de aceite das issues deste serviço: [aceite-final.md](aceite-final.md).
