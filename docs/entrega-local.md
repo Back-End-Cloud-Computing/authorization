@@ -67,3 +67,5 @@ Validações anteriores registradas em 25/10: três réplicas, ADMIN/CLIENTE, RS
 ## Pendências
 
 Realizar o ensaio em grupo (#7), por último. A issue #8 está encerrada; a revisão documental foi enviada à branch própria codex/documentacao-authorization, aguardando revisão para integração. O ambiente permanecerá local.
+
+Matriz completa de aceite das issues deste serviço: [aceite-final.md](aceite-final.md).
