@@ -46,7 +46,7 @@ Guia detalhado: [COMO-FUNCIONA](COMO-FUNCIONA.md). Comparação com o material i
 
 ADMIN_EMAIL e ADMIN_PASSWORD configuram a conta inicial de teste na inicialização. O cadastro público não concede ADMIN. Usar o mesmo par de chaves para emitir e verificar os tokens nesse ambiente.
 
-Eduardo confirmou em 29/10 o compartilhamento das credenciais ADMIN de teste por canal privado com os responsáveis por promotion e gateway. Isso atende à pendência humana de compartilhamento da issue #8 registrada na auditoria. Senha, tokens e chave privada não pertencem ao README nem à issue. O estado remoto da issue ainda precisa ser atualizado quando houver acesso ao GitHub; não se afirma que ela já foi fechada.
+Eduardo confirmou em 29/10 o compartilhamento das credenciais ADMIN de teste por canal privado com os responsáveis por promotion e gateway. Isso atende à pendência humana de compartilhamento da issue #8 registrada na auditoria. Senha, tokens e chave privada não pertencem ao README nem à issue. A confirmação foi registrada no GitHub e a [issue #8 foi encerrada](https://github.com/Back-End-Cloud-Computing/authorization/issues/8).
 
 Credenciais de um banco local não criam automaticamente a mesma conta em outro banco: os colegas devem usar o ambiente combinado ou configurar a conta de teste na própria instância. O endpoint e a chave pública precisam pertencer à instância que emitiu o token.
 
@@ -66,4 +66,4 @@ Validações anteriores registradas em 25/10: três réplicas, ADMIN/CLIENTE, RS
 
 ## Pendências
 
-Registrar a confirmação de compartilhamento na issue remota #8 e realizar o ensaio em grupo (#7), por último. Esta revisão documental está em branch própria, ainda sem envio ao GitHub. O ambiente permanecerá local.
+Realizar o ensaio em grupo (#7), por último. A issue #8 está encerrada; a revisão documental foi enviada à branch própria codex/documentacao-authorization, aguardando revisão para integração. O ambiente permanecerá local.
