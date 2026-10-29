@@ -3,6 +3,10 @@
 Microsserviço de autenticação e autorização do e-commerce **GANJJ**. Emite e valida os
 tokens JWT usados por todos os outros serviços do sistema.
 
+## Guia deste serviço
+
+[Entrega local e integração](docs/entrega-local.md): responsabilidade, como iniciar, endereços, configuração, integração com os colegas, evidências e pendências específicas deste repositório. Atualizado em 29/10/2026.
+
 ## Stack
 
 - **Java 21 + Spring Boot** (Spring Security)

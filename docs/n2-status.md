@@ -1,6 +1,6 @@
 # Validação N2 — authorization
 
-Atualizado em 25/10/2026. Evidências sanitizadas em `docs/evidence/2026-10-25/`.
+Atualizado em 29/10/2026; as validações técnicas abaixo foram registradas em 25/10/2026. Evidências sanitizadas em `docs/evidence/2026-10-25/`.
 
 ## Executado
 
@@ -17,4 +17,6 @@ Atualizado em 25/10/2026. Evidências sanitizadas em `docs/evidence/2026-10-25/`
 ## Pendências humanas / externas
 
 - Ensaio da apresentação com o grupo, com tempo por pessoa; roteiro pronto, mas não foi declarado um ensaio humano que não ocorreu.
-- Acordo e compartilhamento privado das credenciais de teste com os responsáveis por promotion/gateway. Não publicar senha/token/chave privada em issue ou PR.
+- Compartilhamento privado ADMIN confirmado por Eduardo em 29/10 com promotion/gateway; registrar a confirmação na issue remota #8 quando houver acesso ao GitHub. Nenhuma senha/token/chave privada deve constar em issue ou PR.
+
+Guia operacional próprio: [entrega-local.md](entrega-local.md). O ambiente permanecerá local; DNS .svc não é hospedagem pública. A revisão documental não reexecutou a suíte técnica.
